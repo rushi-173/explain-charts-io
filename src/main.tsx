@@ -8,22 +8,22 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import ChartPlayground from './pages/ChartPlayground';
 
 const router = createBrowserRouter([
-	{
-		path: '/',
-		element: <Home />,
-	},
-	{
-		path: '/playground',
-		element: <ChartPlayground />,
-	},
+    {
+        path: '/',
+        element: <Home />,
+    },
+    {
+        path: '/playground',
+        element: <ChartPlayground />,
+    },
 ]);
 
 const store = setupStore();
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-	<React.StrictMode>
-		<Provider store={store}>
-			<RouterProvider router={router} />
-		</Provider>
-	</React.StrictMode>
+    <React.StrictMode>
+        <Provider store={store}>
+            <RouterProvider router={router} />
+        </Provider>
+    </React.StrictMode>
 );
