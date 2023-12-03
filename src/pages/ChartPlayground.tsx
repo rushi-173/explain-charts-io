@@ -25,6 +25,23 @@ const ChartPlayground = () => {
     const { editor, onReady } = useFabricJSEditor();
     const history: any[] = [];
     const [cropImage, setCropImage] = useState(true);
+    const [color, setColor] = useState('#000000');
+    const [brushSize, setBrushSize] = useState(5);
+
+    useEffect(() => {
+        if (!editor || !fabric) {
+            return;
+        }
+        editor.canvas.freeDrawingBrush.color = color;
+        editor.setStrokeColor(color);
+    }, [color]);
+
+    useEffect(() => {
+        if (!editor || !fabric) {
+            return;
+        }
+        editor.canvas.freeDrawingBrush.width = brushSize;
+    }, [brushSize]);
 
     useEffect(() => {
         const setupCanvasEvents = () => {
@@ -169,6 +186,33 @@ const ChartPlayground = () => {
         editor?.canvas?.add(chart);
     };
 
+    const onAddCircle = () => {
+        editor?.addCircle();
+    };
+    const onAddRectangle = () => {
+        editor?.addRectangle();
+    };
+    const onAddText = () => {
+        editor?.addText('Your Text');
+    };
+
+    const exportSvg = () => {
+        const svg: any = editor?.canvas.toSVG();
+        const blob = new Blob([svg], { type: 'image/svg+xml' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'canvas.svg';
+        link.click();
+    };
+
+    const exportPng = () => {
+        const dataUrl: any = editor?.canvas.toDataURL('image/png');
+        const link = document.createElement('a');
+        link.href = dataUrl;
+        link.download = 'canvas.png';
+        link.click();
+    };
+
     return (
         <div className="flex flex-col h-[100vh] w-full p-4 bg-slate-100">
             <div className="flex h-[10%] justify-center items-center">
@@ -193,7 +237,7 @@ const ChartPlayground = () => {
                     />
                 </div>
                 <div className="flex h-full w-[2px] bg-white"></div>
-                <div className="flex h-full w-[20%] bg-white p-4">
+                <div className="flex h-full w-[20%] bg-white p-4 overflow-y-auto">
                     <div className="flex flex-col gap-2 w-full">
                         <div className="flex flex-col gap-2">
                             <h4 className="font-medium text-md text-violet-900">
@@ -218,28 +262,7 @@ const ChartPlayground = () => {
                             <ActionButton label="Clear" onClick={onClear} />
                         </div>
                         <div className="flex w-full h-[2px] bg-slate-200 my-2" />
-                        <div className="flex flex-col gap-2">
-                            <h4 className="font-medium text-md text-violet-900">
-                                Draw
-                            </h4>
-                            <ActionButton
-                                label="Draw"
-                                onClick={onToggleDraw}
-                                isActive={isDrawingMode}
-                            />
-                        </div>
-                        <div className="flex w-full h-[2px] bg-slate-200 my-2" />
-                        <div className="flex flex-col gap-2">
-                            <h4 className="font-medium text-md text-violet-900">
-                                Shapes
-                            </h4>
 
-                            <ActionButton
-                                label="Add Line"
-                                onClick={onAddLine}
-                            />
-                        </div>
-                        <div className="flex w-full h-[2px] bg-slate-200 my-2" />
                         <div className="flex flex-col gap-2">
                             <h4 className="font-medium text-md text-violet-900">
                                 Charts
@@ -250,11 +273,87 @@ const ChartPlayground = () => {
                                 onClick={onAddLineChart}
                             />
                         </div>
-                        <div className="flex w-full h-[2px] bg-slate-200 my-2" />{' '}
+                        <div className="flex w-full h-[2px] bg-slate-200 my-2" />
+                        <div className="flex flex-col gap-2">
+                            <h4 className="font-medium text-md text-violet-900">
+                                Color
+                            </h4>
+                            <input
+                                className="w-full max-w-[100px]"
+                                type="color"
+                                value={color}
+                                onChange={(e) => setColor(e.target.value)}
+                            />
+                        </div>
+                        <div className="flex w-full h-[2px] bg-slate-200 my-2" />
+                        <div className="flex flex-col gap-2">
+                            <h4 className="font-medium text-md text-violet-900">
+                                Draw
+                            </h4>
+                            <div className="flex p-2 rounded-md flex-col border-slate-200 border-[1px] gap-2">
+                                <label htmlFor="slider" className="text-sm">
+                                    Brush Size: {brushSize}
+                                </label>
+                                <input
+                                    type="range"
+                                    id="slider"
+                                    name="slider"
+                                    min="1"
+                                    max="20"
+                                    value={brushSize}
+                                    onChange={(e) => {
+                                        setBrushSize(
+                                            parseInt(e.target.value, 10)
+                                        );
+                                    }}
+                                    className="w-full max-w-[150px]"
+                                />
+                            </div>
+                            <ActionButton
+                                label="Draw"
+                                onClick={onToggleDraw}
+                                isActive={isDrawingMode}
+                            />
+                        </div>
+                        <div className="flex w-full h-[2px] bg-slate-200 my-2" />
+                        <div className="flex flex-col gap-2">
+                            <h4 className="font-medium text-md text-violet-900">
+                                Add Shapes
+                            </h4>
+
+                            <ActionButton
+                                label="Add Line"
+                                onClick={onAddLine}
+                            />
+
+                            <ActionButton
+                                label="Add Circle"
+                                onClick={onAddCircle}
+                            />
+
+                            <ActionButton
+                                label="Add Rectangle"
+                                onClick={onAddRectangle}
+                            />
+
+                            <ActionButton
+                                label="Add Text"
+                                onClick={onAddText}
+                            />
+                        </div>
+                        <div className="flex w-full h-[2px] bg-slate-200 my-2" />
                         <div className="flex flex-col gap-2">
                             <h4 className="font-medium text-md text-violet-900">
                                 File
                             </h4>
+                            <ActionButton
+                                label="Export as SVG"
+                                onClick={exportSvg}
+                            />
+                            <ActionButton
+                                label="Export as PNG"
+                                onClick={exportPng}
+                            />
                         </div>
                         <div className="flex w-full h-[2px] bg-slate-200 my-2" />
                     </div>
