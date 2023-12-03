@@ -13,6 +13,24 @@ const ChartPlayground = () => {
 		editor.addLine();
 	}
 
+	const onDeleteSelectedObject = () => {
+		if(!editor){
+			return;
+		}
+		if(editor.canvas.getActiveObject()){
+			editor.canvas.remove(editor.canvas.getActiveObject());
+		}
+	};
+	
+
+	const onAddChart = () => {
+		if(!editor){
+			return;
+		}
+		// code to add chart
+		
+	}
+
 	return (
 		<div className="flex flex-col h-[100vh] w-full p-4 bg-slate-100">
 			<div className="flex h-[10%] justify-center items-center">
@@ -24,8 +42,10 @@ const ChartPlayground = () => {
 				</div>
 				<div className="flex h-full w-[2px] bg-white"></div>
 				<div className="flex h-full w-[20%] bg-white p-4">
-					<div>
+					<div className="flex flex-col gap-2">
 						<button className="border-slate-200 border-[1px] rounded-md px-3 py-1 text-sm" onClick={onAddLine}>Add line</button>
+						<button className="border-slate-200 border-[1px] rounded-md px-3 py-1 text-sm" onClick={onAddChart}>Add Chart</button>
+						<button className="border-slate-200 border-[1px] rounded-md px-3 py-1 text-sm" onClick={onDeleteSelectedObject}>Delete</button>
 					</div>
 				</div>
 			</div>
