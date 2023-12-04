@@ -2,24 +2,10 @@ import { FabricJSCanvas, useFabricJSEditor } from 'fabricjs-react';
 import { fabric } from 'fabric';
 import { install } from 'echarts-fabric';
 import { useEffect, useState } from 'react';
+import { ActionButton } from '~/components/ActionButton';
+import AddChart from '~/components/AddChart';
 
 install(fabric);
-
-type ActionButtonProps = {
-    label?: string;
-    isActive?: boolean;
-    onClick?: React.MouseEventHandler<HTMLButtonElement>;
-};
-const ActionButton = ({ label, isActive, onClick }: ActionButtonProps) => {
-    const className = `border-slate-200 border-[1px] rounded-md px-3 py-1 text-sm hover:border-violet-800 hover:text-violet-800 ${
-        isActive ? 'border-violet-600 text-violet-600' : ''
-    }`;
-    return (
-        <button className={className} onClick={onClick}>
-            {label}
-        </button>
-    );
-};
 
 const ChartPlayground = () => {
     const { editor, onReady } = useFabricJSEditor();
@@ -162,26 +148,12 @@ const ChartPlayground = () => {
         setCropImage((prev) => !prev);
     };
 
-    const onAddLineChart = () => {
+    const addChart = (option: any, width = 600, height = 300) => {
         // @ts-expect-error
         const chart = new fabric.Chart({
-            width: 600,
-            height: 300,
-            option: {
-                xAxis: {
-                    type: 'category',
-                    data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-                },
-                yAxis: {
-                    type: 'value',
-                },
-                series: [
-                    {
-                        data: [150, 230, 224, 218, 135, 147, 260],
-                        type: 'line',
-                    },
-                ],
-            },
+            width,
+            height,
+            option: option,
         });
         editor?.canvas?.add(chart);
     };
@@ -201,15 +173,15 @@ const ChartPlayground = () => {
         const blob = new Blob([svg], { type: 'image/svg+xml' });
         const link = document.createElement('a');
         link.href = URL.createObjectURL(blob);
-        link.download = 'canvas.svg';
+        link.download = 'chart-canvas.svg';
         link.click();
     };
 
     const exportPng = () => {
-        const dataUrl: any = editor?.canvas.toDataURL('image/png');
+        const dataUrl: any = editor?.canvas.toDataURL('image/png' as any);
         const link = document.createElement('a');
         link.href = dataUrl;
-        link.download = 'canvas.png';
+        link.download = 'chart-canvas.png';
         link.click();
     };
 
@@ -267,11 +239,8 @@ const ChartPlayground = () => {
                             <h4 className="font-medium text-md text-violet-900">
                                 Charts
                             </h4>
-
-                            <ActionButton
-                                label="Add Line Chart"
-                                onClick={onAddLineChart}
-                            />
+                            <AddChart addChart={addChart} type="line" />
+                            <AddChart addChart={addChart} type="pie" />
                         </div>
                         <div className="flex w-full h-[2px] bg-slate-200 my-2" />
                         <div className="flex flex-col gap-2">
